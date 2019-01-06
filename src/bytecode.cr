@@ -1,8 +1,8 @@
 alias Byte = UInt8
 
 struct Opcode
-  getter opcd, size, data
-  def initialize(@opcd : Byte, @size = 1, @data = [] of Byte); end
+  getter opcd, data
+  def initialize(@opcd : Byte, @data = [] of Byte); end
 end
 
 class Bytecode < Array(Opcode)
@@ -13,7 +13,7 @@ class Bytecode < Array(Opcode)
 
     while curbyte = @raw[insp]?
       (size = getCurInstWidth(insp, @raw)) > 0 && 
-        self << Opcode.new(curbyte, size, @raw[insp+1...insp+size]) || 
+        self << Opcode.new(curbyte, @raw[insp+1...insp+size]) || 
         self << Opcode.new(curbyte)
       insp += size
     end
