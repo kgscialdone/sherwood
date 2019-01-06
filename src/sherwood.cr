@@ -53,12 +53,11 @@ module Sherwood
   alias Num = Byte | Int32 | Int64 | UInt32 | UInt64
   alias Byte = UInt8
 
+  def self.runBytecode(bs : IO)
+    return self.runBytecode(bs.each_byte.to_a) end
   def self.runBytecode(*bs : Byte)
-    return self.runBytecode(IO::Memory.new(bs.map(&.chr).sum(""))) end
-  def self.runBytecode(bs : Array(Byte))
-    return self.runBytecode(IO::Memory.new(bs.map(&.chr).sum(""))) end
-  def self.runBytecode(from : IO)
-    prog  = from.each_byte.to_a
+    return self.runBytecode(bs) end
+  def self.runBytecode(prog : Array(Byte))
     insp  = 0
     stack = [] of Any
     vars  = {} of UInt64 => Any
@@ -77,9 +76,7 @@ module Sherwood
       when 0x07 then stack.push(prog[insp+5...insp+5+(prog[insp+1..insp+4].sum)].map(&.chr).sum(""))
 
       # SECTION: Constructors
-      when 0x10 then 
-        size = popType(Num, stack)
-        stack.push(Array(Any).new(size) { stack.pop })
+      when 0x10 then stack.push(Array(Any).new(popType(Num, stack)) { stack.pop })
 
       # SECTION: Stack Operations
       when 0x20 then stack.pop()
@@ -161,8 +158,8 @@ module Sherwood
     test "0x30 getc", ['a'.ord], 0x30
     puts "(Please input: 'abc<ENTER>')"
     test "0x31 getl", ["abc"],   0x31
-    test "0x32 putc", [] of Any, 0x01, 25, 0x01, 97, 0x32, 0x32
-    test "0x33 putl", [] of Any, [0x07, 0x00, 0x00, 0x00, 14].map(&.to_u8) + "Hello, world!".bytes + ['\n'.ord.to_u8, 0x33_u8]
+    test "0x32 putc", [] of Any, 0x01, 97, 0x32
+    test "0x33 putl", [] of Any, [0x07, 0x00, 0x00, 0x00, 14].map(&.to_u8) + "Hello, world!\n".bytes + [0x33_u8]
     puts
 
     # TODO: Variable Operations
