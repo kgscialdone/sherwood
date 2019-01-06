@@ -20,7 +20,7 @@ module Sherwood
   #   In contrast to literals, constructors pop their initialization data from the stack like normal opcodes.
   #   When encountered, the resulting value will be pushed to the stack.
   # = opcd name (params) ==============================================================================================================
-  #   0x10 list (len:int, members:any*len) -- Highest member on stack will be first in list. Errors if len < 0 or len > u32.
+  #   0x10 list (len:num, members:any*len) -- Highest member on stack will be first in list. Errors if len < 0 or len > u32.
   #
   # SECTION: Stack Operations
   #   Base operations on the data stack itself.
@@ -29,23 +29,25 @@ module Sherwood
   #   0x21 dupe (v:any)        -- Duplicates the top of the stack.
   #   0x22 swap (a:any, b:any) -- Swaps the top of the stack with the next value down.
   #
+  # TODO: Arithmetic Operations
+  #
   # SECTION: IO Operations
   #   Basic IO interactions.
   # = opcd name (params) ==============================================================================================================
-  #   0x30 getc ()      -- Gets a char from stdin and pushes it as a u32.
-  #   0x31 getl ()      -- Gets a line from stdin and pushes it as a str (excluding trailing \r?\n).
-  #   0x32 putc (c:int) -- Prints an int from the stack as a character. Errors if c < 0 or c > u32.
-  #   0x33 puts (s:str) -- Prints a string from the stack.
+  #   0x40 getc ()      -- Gets a char from stdin and pushes it as a u32.
+  #   0x41 getl ()      -- Gets a line from stdin and pushes it as a str (excluding trailing \r?\n).
+  #   0x42 putc (c:num) -- Prints a number from the stack as a character. Errors if c < 0 or c > u32.
+  #   0x43 puts (s:str) -- Prints a string from the stack.
   #
   # SECTION: Variable Operations
   #   Opcodes for interactng with variable storage.
   # = opcd name (params) ==============================================================================================================
-  #   0x40 vget (name:str)  -- Pushes the value at the given variable name to the stack.
-  #   0x41 vput (value:any) -- Stores the value on top of the stack as a variable.
-  #   0x42 vdel (name:str)  -- Deletes the value at the given variable name.
+  #   0x50 vget (name:str)  -- Pushes the value at the given variable name to the stack.
+  #   0x51 vput (value:any) -- Stores the value on top of the stack as a variable.
+  #   0x52 vdel (name:str)  -- Deletes the value at the given variable name.
   #   TODO: Scoping ops
+  #   TODO: Rethink structure / execution model for variables
   #
-  # TODO: Arithmetic Operations
   # TODO: Control Flow
   # TODO: Type Queries
 
@@ -82,15 +84,16 @@ module Sherwood
       when 0x20 then stack.pop()
       when 0x21 then stack.push(stack.last)
       when 0x22 then stack.push(stack.pop(), stack.pop())
+        
+      # TODO: Arithmetic Operations
 
       # SECTION: IO Operations
-      when 0x30 then stack.push(STDIN.raw &.read_char.try(&.ord))
-      when 0x31 then stack.push(STDIN.read_line)
-      when 0x32 then print popType(Num, stack).chr
-      when 0x33 then print popType(String, stack)
+      when 0x40 then stack.push(STDIN.raw &.read_char.try(&.ord))
+      when 0x41 then stack.push(STDIN.read_line)
+      when 0x42 then print popType(Num, stack).chr
+      when 0x43 then print popType(String, stack)
 
       # TODO: Variable Operations
-      # TODO: Arithmetic Operations
       # TODO: Control Flow
       # TODO: Type Queries
       end
@@ -152,18 +155,19 @@ module Sherwood
     test "0x21 dupe", [nil, nil],    0x00, 0x21
     test "0x22 swap", [true, false], 0x02, 0, 0x02, 1, 0x22
     puts
+    
+    # TODO: Arithmetic Operations
 
     puts "SECTION: IO Operations"
     puts "(Please input: 'a')"
-    test "0x30 getc", ['a'.ord], 0x30
+    test "0x40 getc", ['a'.ord], 0x40
     puts "(Please input: 'abc<ENTER>')"
-    test "0x31 getl", ["abc"],   0x31
-    test "0x32 putc", [] of Any, 0x01, 97, 0x32
-    test "0x33 putl", [] of Any, [0x07, 0x00, 0x00, 0x00, 14].map(&.to_u8) + "Hello, world!\n".bytes + [0x33_u8]
+    test "0x41 getl", ["abc"],   0x41
+    test "0x42 putc", [] of Any, 0x01, 97, 0x42
+    test "0x43 putl", [] of Any, [0x07, 0x00, 0x00, 0x00, 14].map(&.to_u8) + "Hello, world!\n".bytes + [0x43_u8]
     puts
 
     # TODO: Variable Operations
-    # TODO: Arithmetic Operations
     # TODO: Control Flow
     # TODO: Type Queries
   end
