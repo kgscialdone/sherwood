@@ -98,7 +98,18 @@ module Sherwood
       when 0x21 then stack.push(stack.last)
       when 0x22 then stack.push(stack.pop(), stack.pop())
         
-      # TODO: Arithmetic Operations
+      # SECTION: Arithmetic Operations
+      when 0x30 then stack.push(popType(Num, stack) + popType(Num, stack))
+      when 0x31 then stack.push((b = popType(Num, stack); popType(Num, stack)) - b)
+      when 0x32 then stack.push(popType(Num, stack) * popType(Num, stack))
+      when 0x33 then stack.push((b = popType(Num, stack); popType(Num, stack)) / b)
+      when 0x34 then stack.push((b = popType(Num, stack); popType(Num, stack)) % b)
+      when 0x35 then stack.push((b = popType(Num, stack); popType(Num, stack)) << b)
+      when 0x36 then stack.push((b = popType(Num, stack); popType(Num, stack)) >> b)
+      when 0x37 then stack.push(~popType(Num, stack))
+      when 0x38 then stack.push(popType(Num, stack) & popType(Num, stack))
+      when 0x39 then stack.push(popType(Num, stack) | popType(Num, stack))
+      when 0x3a then stack.push(popType(Num, stack) ^ popType(Num, stack))
 
       # SECTION: IO Operations
       when 0x40 then stack.push(STDIN.raw &.read_char.try(&.ord))
@@ -169,7 +180,19 @@ module Sherwood
     test "0x22 swap", [true, false], 0x02, 0, 0x02, 1, 0x22
     puts
     
-    # TODO: Arithmetic Operations
+    puts "SECTION: Arithmetic Operations"
+    test "0x30 add", [5], 0x01, 2, 0x01, 3, 0x30
+    test "0x31 sub", [1], 0x01, 3, 0x01, 2, 0x31
+    test "0x32 mul", [6], 0x01, 2, 0x01, 3, 0x32
+    test "0x33 div", [2], 0x01, 4, 0x01, 2, 0x33
+    test "0x34 mod", [1], 0x01, 5, 0x01, 2, 0x34
+    test "0x35 shl", [0b10010000], 0x01, 0b00100100, 0x01, 2, 0x35
+    test "0x36 shr", [0b00001001], 0x01, 0b00100100, 0x01, 2, 0x36
+    test "0x37 not", [0b11011011], 0x01, 0b00100100, 0x37
+    test "0x38 and", [0b00100000], 0x01, 0b00100100, 0x01, 0b11111011, 0x38
+    test "0x39 or ", [0b10110100], 0x01, 0b00100100, 0x01, 0b10010000, 0x39
+    test "0x3a xor", [0b10110000], 0x01, 0b00100100, 0x01, 0b10010100, 0x3a
+    puts
 
     puts "SECTION: IO Operations"
     puts "(Please input: 'a')"
