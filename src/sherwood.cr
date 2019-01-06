@@ -29,7 +29,20 @@ module Sherwood
   #   0x21 dupe (v:any)        -- Duplicates the top of the stack.
   #   0x22 swap (a:any, b:any) -- Swaps the top of the stack with the next value down.
   #
-  # TODO: Arithmetic Operations
+  # SECTION: Arithmetic Operations
+  #   Basic and bitwise arithmetic operations.
+  # = opcd name (params) ==============================================================================================================
+  #   0x30 add  (a:num, b:num) -- Adds the two numbers on the top of the stack.
+  #   0x31 sub  (a:num, b:num) -- Subtracts the number on the top of the stack from the number below it.
+  #   0x32 mul  (a:num, b:num) -- Multiplies the two numbers on the top of the stack.
+  #   0x33 div  (a:num, b:num) -- Divides the number on the top of the stack from the number below it.
+  #   0x34 mod  (a:num, b:num) -- Gets the remainder of dividing the two numbers on the top of the stack.
+  #   0x35 shl  (d:num, n:num) -- Shifts n left by d bits.
+  #   0x36 shr  (d:num, n:num) -- Shifts n right by d bits.
+  #   0x37 not  (a:num)        -- Bitwise NOT of a.
+  #   0x38 and  (a:num, b:num) -- Bitwise AND of a and b.
+  #   0x39 or   (a:num, b:num) -- Bitwise OR of a and b.
+  #   0x3a xor  (a:num, b:num) -- Bitwise XOR of a and b.
   #
   # SECTION: IO Operations
   #   Basic IO interactions.
