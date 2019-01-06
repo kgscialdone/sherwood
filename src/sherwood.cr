@@ -1,3 +1,5 @@
+require "./bytecode"
+
 module Sherwood
   VERSION = "0.1.0"
 
@@ -66,29 +68,28 @@ module Sherwood
 
   alias Any = Nil | Num | Bool | String | Array(Any)
   alias Num = Byte | Int32 | Int64 | UInt32 | UInt64
-  alias Byte = UInt8
 
   def self.runBytecode(prog : IO)
-    return self.runBytecode(bs.each_byte.to_a) end
+    return self.runBytecode(prog.each_byte.to_a) end
   def self.runBytecode(*prog : Byte)
-    return self.runBytecode(bs) end
+    return self.runBytecode(prog) end
   def self.runBytecode(prog : Array(Byte))
+    return self.runBytecode(Bytecode.new(prog)) end
+  def self.runBytecode(prog : Bytecode)
     insp  = 0
     stack = [] of Any
     vars  = {} of UInt64 => Any
 
-    while curbyte = prog[insp]?
-      case curbyte
-
+    while op = prog[insp]?; case op.opcd
       # SECTION: Literals
       when 0x00 then stack.push(nil)
-      when 0x01 then stack.push(prog[insp+1])
-      when 0x02 then stack.push(prog[insp+1] > 0)
-      when 0x03 then stack.push(prog[insp+1..insp+4].map(&.to_i32).reduce {|a,b| (a<<8)+b})
-      when 0x04 then stack.push(prog[insp+1..insp+8].map(&.to_i64).reduce {|a,b| (a<<8)+b})
-      when 0x05 then stack.push(prog[insp+1..insp+4].map(&.to_u32).reduce {|a,b| (a<<8)+b})
-      when 0x06 then stack.push(prog[insp+1..insp+8].map(&.to_u64).reduce {|a,b| (a<<8)+b})
-      when 0x07 then stack.push(prog[insp+5...insp+5+(prog[insp+1..insp+4].sum)].map(&.chr).sum(""))
+      when 0x01 then stack.push(op.data[0])
+      when 0x02 then stack.push(op.data[0] > 0)
+      when 0x03 then stack.push(op.data.map(&.to_i32).reduce {|a,b| (a<<8)+b})
+      when 0x04 then stack.push(op.data.map(&.to_i64).reduce {|a,b| (a<<8)+b})
+      when 0x05 then stack.push(op.data.map(&.to_u32).reduce {|a,b| (a<<8)+b})
+      when 0x06 then stack.push(op.data.map(&.to_u64).reduce {|a,b| (a<<8)+b})
+      when 0x07 then stack.push(op.data.skip(4).map(&.chr).sum(""))
 
       # SECTION: Constructors
       when 0x10 then stack.push(Array(Any).new(popType(Num, stack)) { stack.pop })
@@ -122,24 +123,11 @@ module Sherwood
       # TODO: Type Queries
       end
 
-      puts "0x#{curbyte.to_s(16).rjust(2,'0')} #{stack}"
-      insp += getCurInstWidth(insp, prog)
+      puts "0x#{op.opcd.to_s(16).rjust(2,'0')} #{stack}"
+      insp += 1
     end
 
     return stack
-  end
-  
-  private def self.getCurInstWidth(insp : Int, prog : Array(Byte))
-    return 1 + case prog[insp]
-    when 0x01 then 1
-    when 0x02 then 1
-    when 0x03 then 4
-    when 0x04 then 8
-    when 0x05 then 4
-    when 0x06 then 8
-    when 0x07 then 4+prog[insp+1..insp+4].sum
-    else 0
-    end
   end
 
   private macro popType(typ, stack)
