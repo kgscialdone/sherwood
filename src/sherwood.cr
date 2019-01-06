@@ -53,9 +53,9 @@ module Sherwood
   alias Num = Byte | Int32 | Int64 | UInt32 | UInt64
   alias Byte = UInt8
 
-  def self.runBytecode(bs : IO)
+  def self.runBytecode(prog : IO)
     return self.runBytecode(bs.each_byte.to_a) end
-  def self.runBytecode(*bs : Byte)
+  def self.runBytecode(*prog : Byte)
     return self.runBytecode(bs) end
   def self.runBytecode(prog : Array(Byte))
     insp  = 0
