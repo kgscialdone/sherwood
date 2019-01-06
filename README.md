@@ -1,18 +1,10 @@
 # sherwood
 
-TODO: Write a description here
+A simple and sensible bytecode VM, because sometimes you can't see Sherwood Forest for the trees.
 
-## Installation
+## Installation / Usage / Development
 
-TODO: Write installation instructions here
-
-## Usage
-
-TODO: Write usage instructions here
-
-## Development
-
-TODO: Write development instructions here
+Sherwood is nowhere near ready for use yet. I'd recommend not trying.
 
 ## Contributing
 
@@ -24,4 +16,4 @@ TODO: Write development instructions here
 
 ## Contributors
 
-- [your-github-user](https://github.com/your-github-user) your-name-here - creator, maintainer
+- @swordglowsblue - creator, maintainer

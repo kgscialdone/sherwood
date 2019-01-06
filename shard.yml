@@ -1,0 +1,12 @@
+name: sherwood
+version: 0.1.0
+
+authors:
+  - Connor Scialdone (swordglowsblue) cj@swordglowsblue.com
+
+targets:
+  sherwood:
+    main: src/sherwood.cr
+
+crystal: 0.26.1
+license: MIT
