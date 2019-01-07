@@ -55,15 +55,7 @@ module Sherwood
   #   0x42 putc (c:num) -- Prints a number from the stack as a character. Errors if c < 0 or c > u32.
   #   0x43 puts (s:str) -- Prints a string from the stack.
   #
-  # SECTION: Variable Operations
-  #   Opcodes for interactng with variable storage.
-  # = opcd name (params) ==============================================================================================================
-  #   0x50 vget (name:str)  -- Pushes the value at the given variable name to the stack.
-  #   0x51 vput (value:any) -- Stores the value on top of the stack as a variable.
-  #   0x52 vdel (name:str)  -- Deletes the value at the given variable name.
-  #   TODO: Scoping ops
-  #   TODO: Rethink structure / execution model for variables
-  #
+  # TODO: Variable Operations
   # TODO: Control Flow
   # TODO: Type Queries
 
@@ -79,7 +71,6 @@ module Sherwood
   def self.runBytecode(prog : Bytecode)
     insp  = 0
     stack = [] of Any
-    vars  = {} of UInt64 => Any
 
     while op = prog[insp]?; case op.opcd
       # SECTION: Literals
