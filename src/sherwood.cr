@@ -1,4 +1,5 @@
 require "./bytecode"
+require "./util"
 
 module Sherwood
   VERSION = "0.1.0"
@@ -85,10 +86,10 @@ module Sherwood
       when 0x00 then stack.push(nil)
       when 0x01 then stack.push(op.data[0])
       when 0x02 then stack.push(op.data[0] > 0)
-      when 0x03 then stack.push(op.data.map(&.to_i32).reduce {|a,b| (a<<8)+b})
-      when 0x04 then stack.push(op.data.map(&.to_i64).reduce {|a,b| (a<<8)+b})
-      when 0x05 then stack.push(op.data.map(&.to_u32).reduce {|a,b| (a<<8)+b})
-      when 0x06 then stack.push(op.data.map(&.to_u64).reduce {|a,b| (a<<8)+b})
+      when 0x03 then stack.push(op.data.map(&.to_i32).bitwiseConcat)
+      when 0x04 then stack.push(op.data.map(&.to_i64).bitwiseConcat)
+      when 0x05 then stack.push(op.data.map(&.to_u32).bitwiseConcat)
+      when 0x06 then stack.push(op.data.map(&.to_u64).bitwiseConcat)
       when 0x07 then stack.push(op.data.skip(4).map(&.chr).sum(""))
 
       # SECTION: Constructors
