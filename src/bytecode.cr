@@ -1,7 +1,5 @@
 require "./util"
 
-alias Byte = UInt8
-
 struct Opcode
   getter opcd, data
   def initialize(@opcd : Byte, @data = [] of Byte); end
@@ -24,9 +22,9 @@ class Bytecode < Array(Opcode)
   private def getCurInstWidth(insp : Int, prog : Array(Byte))
     return 1 + case prog[insp]
     when 0x01, 0x02 then 1
-    when 0x03, 0x05 then 4
-    when 0x04, 0x06 then 8
-    when 0x07 then 4+prog[insp+1..insp+4].bitwiseConcat
+    when 0x03, 0x05, 0x07 then 4
+    when 0x04, 0x06, 0x08 then 8
+    when 0x09 then 4+prog[insp+1..insp+4].bitwiseConcat
     else 0
     end
   end
