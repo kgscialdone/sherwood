@@ -4,6 +4,17 @@ require "./util"
 module Sherwood
   VERSION = "0.1.0"
 
+  # Standard IO ports, abstracted out for ease of testing
+  @@stdin  : IO = STDIN
+  @@stdout : IO = STDOUT
+  @@stderr : IO = STDERR
+  def self.stdin= (@@stdin  : IO); end
+  def self.stdout=(@@stdout : IO); end
+  def self.stderr=(@@stderr : IO); end
+  def self.stdin ; @@stdin  end
+  def self.stdout; @@stdout end
+  def self.stderr; @@stderr end
+
   # -- Bytecode instruction layout --
   #
   # SECTION: Literals
@@ -111,20 +122,22 @@ module Sherwood
       when 0x3a then stack.push(popType(SWInt, stack) ^ popType(SWInt, stack))
 
       # SECTION: IO Operations
-      when 0x40 then 
-        STDIN.tty? &&
-          stack.push(STDIN.raw &.read_char.try(&.ord)) ||
-          stack.push(STDIN.read_char.try(&.ord))
-      when 0x41 then stack.push(STDIN.gets)
-      when 0x42 then print popType(SWInt, stack).chr
-      when 0x43 then print popType(String, stack)
+      when 0x40 then
+        if (csi = @@stdin).is_a?(IO::FileDescriptor) && csi.tty?
+          stack.push(csi.raw &.read_char.try(&.ord))
+        else
+          stack.push(csi.read_char.try(&.ord))
+        end
+      when 0x41 then stack.push(@@stdin.gets)
+      when 0x42 then @@stdout.print popType(SWInt, stack).chr
+      when 0x43 then @@stdout.print popType(String, stack)
 
       # TODO: Variable Operations
       # TODO: Control Flow
       # TODO: Type Queries
       end
 
-      puts "0x#{op.opcd.to_s(16).rjust(2,'0')} #{stack}"
+      {% if flag?(:stack) %} puts "    0x#{op.opcd.to_s(16).rjust(2,'0')} #{stack}" {% end %}
       insp += 1
     end
 
@@ -135,70 +148,6 @@ module Sherwood
     (v = {{stack}}.pop).as?({{typ}}) || 
       raise "Type error: Expected #{{{typ}}}, got #{v.class}"
   end
-  
-  # SECTION: Tests
-  # TODO: Move to proper spec definition
-
-  private def self.test(desc : String, expected : Array(SWAny), *bc : Byte) 
-    test(desc, expected, bc.to_a) end
-  private def self.test(desc : String, expected : Array(SWAny), bc : Array(Byte))
-    result = runBytecode(bc)
-    raise "  Test failed: #{desc}\n  Resulting stack: #{result}\n  Expected stack: #{expected}" unless result == expected
-    puts  "  Test succeeded: #{desc}"
-  end
-
-  def self.runTests
-    puts "SECTION: Literals"
-    test "0x00 null", [nil],                     0x00
-    test "0x01 byte", [0_u8],                    0x01, 0x00
-    test "0x02 bool", [false],                   0x02, 0x00
-    test "0x03 i32",  [252645135_i32],           0x03, 0x0f, 0x0f, 0x0f, 0x0f
-    test "0x04 i64",  [1085102592571150095_i64], 0x04, 0x0f, 0x0f, 0x0f, 0x0f, 0x0f, 0x0f, 0x0f, 0x0f
-    test "0x05 u32",  [252645135_u32],           0x05, 0x0f, 0x0f, 0x0f, 0x0f
-    test "0x06 u64",  [1085102592571150095_u64], 0x06, 0x0f, 0x0f, 0x0f, 0x0f, 0x0f, 0x0f, 0x0f, 0x0f
-    test "0x07 f32",  [9000.1_f32],              0x07, 0x46, 0x0c, 0xa0, 0x66
-    test "0x08 f64",  [9000.1_f64],              0x08, 0x40, 0xc1, 0x94, 0x0c, 0xcc, 0xcc, 0xcc, 0xcd
-    test "0x09 str",  ["Hello, world!"],         [0x09, 0x00, 0x00, 0x00, 13].map(&.to_u8) + "Hello, world!".bytes
-    puts
-
-    puts "SECTION: Constructors"
-    test "0x10 list", [[true, false]], 0x02, 0, 0x02, 1, 0x01, 2, 0x10
-    puts
-
-    puts "SECTION: Stack Operations"
-    test "0x20 drop", [] of SWAny,   0x00, 0x20
-    test "0x21 dupe", [nil, nil],    0x00, 0x21
-    test "0x22 swap", [true, false], 0x02, 0, 0x02, 1, 0x22
-    puts
-    
-    puts "SECTION: Arithmetic Operations"
-    test "0x30 add", [5], 0x01, 2, 0x01, 3, 0x30
-    test "0x31 sub", [1], 0x01, 3, 0x01, 2, 0x31
-    test "0x32 mul", [6], 0x01, 2, 0x01, 3, 0x32
-    test "0x33 div", [2], 0x01, 4, 0x01, 2, 0x33
-    test "0x34 mod", [1], 0x01, 5, 0x01, 2, 0x34
-    test "0x35 shl", [0b10010000], 0x01, 0b00100100, 0x01, 2, 0x35
-    test "0x36 shr", [0b00001001], 0x01, 0b00100100, 0x01, 2, 0x36
-    test "0x37 not", [0b11011011], 0x01, 0b00100100, 0x37
-    test "0x38 and", [0b00100000], 0x01, 0b00100100, 0x01, 0b11111011, 0x38
-    test "0x39 or ", [0b10110100], 0x01, 0b00100100, 0x01, 0b10010000, 0x39
-    test "0x3a xor", [0b10110000], 0x01, 0b00100100, 0x01, 0b10010100, 0x3a
-    puts
-
-    puts "SECTION: IO Operations"
-    puts "(Please input: 'a')"
-    test "0x40 getc", ['a'.ord],   0x40
-    puts "(Please input: 'abc<ENTER>')"
-    test "0x41 getl", ["abc"],     0x41
-    test "0x42 putc", [] of SWAny, 0x01, 97, 0x42
-    test "0x43 putl", [] of SWAny, [0x09, 0x00, 0x00, 0x00, 14].map(&.to_u8) + "Hello, world!\n".bytes + [0x43_u8]
-    puts
-
-    # TODO: Variable Operations
-    # TODO: Control Flow
-    # TODO: Type Queries
-  end
 end
 
 # Sherwood.runBytecode File.open(ARGV[0])
-Sherwood.runTests
