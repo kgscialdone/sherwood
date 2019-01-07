@@ -111,8 +111,11 @@ module Sherwood
       when 0x3a then stack.push(popType(SWInt, stack) ^ popType(SWInt, stack))
 
       # SECTION: IO Operations
-      when 0x40 then stack.push(STDIN.raw &.read_char.try(&.ord))
-      when 0x41 then stack.push(STDIN.read_line)
+      when 0x40 then 
+        STDIN.tty? &&
+          stack.push(STDIN.raw &.read_char.try(&.ord)) ||
+          stack.push(STDIN.read_char.try(&.ord))
+      when 0x41 then stack.push(STDIN.gets)
       when 0x42 then print popType(SWInt, stack).chr
       when 0x43 then print popType(String, stack)
 
@@ -163,7 +166,7 @@ module Sherwood
     puts
 
     puts "SECTION: Stack Operations"
-    test "0x20 drop", [] of SWAny,     0x00, 0x20
+    test "0x20 drop", [] of SWAny,   0x00, 0x20
     test "0x21 dupe", [nil, nil],    0x00, 0x21
     test "0x22 swap", [true, false], 0x02, 0, 0x02, 1, 0x22
     puts
@@ -184,9 +187,9 @@ module Sherwood
 
     puts "SECTION: IO Operations"
     puts "(Please input: 'a')"
-    test "0x40 getc", ['a'.ord], 0x40
+    test "0x40 getc", ['a'.ord],   0x40
     puts "(Please input: 'abc<ENTER>')"
-    test "0x41 getl", ["abc"],   0x41
+    test "0x41 getl", ["abc"],     0x41
     test "0x42 putc", [] of SWAny, 0x01, 97, 0x42
     test "0x43 putl", [] of SWAny, [0x09, 0x00, 0x00, 0x00, 14].map(&.to_u8) + "Hello, world!\n".bytes + [0x43_u8]
     puts
