@@ -46,7 +46,10 @@ module Sherwood
       when 0x09 then stack.push(op.data.skip(4).map(&.chr).sum(""))
 
       # SECTION: Constructors
-      when 0x10 then stack.push(Array(SWAny).new(popType(SWInt, stack)) { stack.pop })
+      when 0x10 then 
+        (size = popType(SWInt, stack)) > 0 &&
+          stack.push(Array(SWAny).new(size) { stack.pop }) ||
+          stack.push([] of SWAny)
 
       # SECTION: Stack Operations
       when 0x20 then stack.pop()
