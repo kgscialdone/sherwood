@@ -51,6 +51,24 @@ SECTION: IO Operations
   0x42 putc (c:int) -- Prints a number from the stack as a character. Errors if c < 0 or c > u32.
   0x43 puts (s:str) -- Prints a string from the stack.
 
+SECTION: Type Queries
+  Opcodes to query the types of variables from the stack.
+  These opcodes operate on the top of the stack, but do not pop from it.
+  Each opcode returns a bool; true if the type matches, false if it does not.
+= opcd name ======================================================================================================================
+  -- Literal types
+  0x50 null?
+  0x51 byte?
+  0x52 bool?
+  0x53 i32?
+  0x54 i64?
+  0x55 u32?
+  0x56 u64?
+  0x57 f32?
+  0x58 f64?
+  0x59 str?
+  -- Constructor types
+  0x60 list?
+
 TODO: Variable Operations
 TODO: Control Flow
-TODO: Type Queries

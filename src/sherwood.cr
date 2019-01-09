@@ -79,10 +79,23 @@ module Sherwood
       when 0x41 then stack.push(@@stdin.gets)
       when 0x42 then @@stdout.print popType(SWInt, stack).chr
       when 0x43 then @@stdout.print popType(String, stack)
+        
+      # SECTION: Type Queries
+      when 0x50 then stack.push(stack.last.nil?)
+      when 0x51 then stack.push(stack.last.is_a?(Byte))
+      when 0x52 then stack.push(stack.last.is_a?(Bool))
+      when 0x53 then stack.push(stack.last.is_a?(Int32))
+      when 0x54 then stack.push(stack.last.is_a?(Int64))
+      when 0x55 then stack.push(stack.last.is_a?(UInt32))
+      when 0x56 then stack.push(stack.last.is_a?(UInt64))
+      when 0x57 then stack.push(stack.last.is_a?(Float32))
+      when 0x58 then stack.push(stack.last.is_a?(Float64))
+      when 0x59 then stack.push(stack.last.is_a?(String))
+
+      when 0x60 then stack.push(stack.last.is_a?(Array))
 
       # TODO: Variable Operations
       # TODO: Control Flow
-      # TODO: Type Queries
       end
 
       {% if flag?(:stack) %} puts "    0x#{op.opcd.to_s(16).rjust(2,'0')} #{stack}" {% end %}
