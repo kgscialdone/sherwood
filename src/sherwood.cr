@@ -48,48 +48,48 @@ module Sherwood
         (size = op.data.map(&.to_u32).bitwiseConcat) > 0 &&
           stack.push(Array(SWAny).new(size) { stack.pop }) ||
           stack.push([] of SWAny)
+        
+      # SECTION: Type Queries
+      when 0x10 then stack.push(stack.last.nil?)
+      when 0x11 then stack.push(stack.last.is_a?(Byte))
+      when 0x12 then stack.push(stack.last.is_a?(Bool))
+      when 0x13 then stack.push(stack.last.is_a?(Int32))
+      when 0x14 then stack.push(stack.last.is_a?(Int64))
+      when 0x15 then stack.push(stack.last.is_a?(UInt32))
+      when 0x16 then stack.push(stack.last.is_a?(UInt64))
+      when 0x17 then stack.push(stack.last.is_a?(Float32))
+      when 0x18 then stack.push(stack.last.is_a?(Float64))
+      when 0x19 then stack.push(stack.last.is_a?(String))
+      when 0x1a then stack.push(stack.last.is_a?(Array))
 
       # SECTION: Stack Operations
-      when 0x10 then stack.pop()
-      when 0x11 then stack.push(stack.last)
-      when 0x12 then stack.push(stack.pop(), stack.pop())
+      when 0x20 then stack.pop()
+      when 0x21 then stack.push(stack.last)
+      when 0x22 then stack.push(stack.pop(), stack.pop())
         
       # SECTION: Arithmetic Operations
-      when 0x20 then stack.push(popType(SWNum, stack) + popType(SWNum, stack))
-      when 0x21 then stack.push((b = popType(SWNum, stack); popType(SWNum, stack)) - b)
-      when 0x22 then stack.push(popType(SWNum, stack) * popType(SWNum, stack))
-      when 0x23 then stack.push((b = popType(SWNum, stack); popType(SWNum, stack)) / b)
-      when 0x24 then stack.push((b = popType(SWInt, stack); popType(SWInt, stack)) % b)
-      when 0x25 then stack.push((b = popType(SWInt, stack); popType(SWInt, stack)) << b)
-      when 0x26 then stack.push((b = popType(SWInt, stack); popType(SWInt, stack)) >> b)
-      when 0x27 then stack.push(~popType(SWInt, stack))
-      when 0x28 then stack.push(popType(SWInt, stack) & popType(SWInt, stack))
-      when 0x29 then stack.push(popType(SWInt, stack) | popType(SWInt, stack))
-      when 0x2a then stack.push(popType(SWInt, stack) ^ popType(SWInt, stack))
+      when 0x30 then stack.push(popType(SWNum, stack) + popType(SWNum, stack))
+      when 0x31 then stack.push((b = popType(SWNum, stack); popType(SWNum, stack)) - b)
+      when 0x32 then stack.push(popType(SWNum, stack) * popType(SWNum, stack))
+      when 0x33 then stack.push((b = popType(SWNum, stack); popType(SWNum, stack)) / b)
+      when 0x34 then stack.push((b = popType(SWInt, stack); popType(SWInt, stack)) % b)
+      when 0x35 then stack.push((b = popType(SWInt, stack); popType(SWInt, stack)) << b)
+      when 0x36 then stack.push((b = popType(SWInt, stack); popType(SWInt, stack)) >> b)
+      when 0x37 then stack.push(~popType(SWInt, stack))
+      when 0x38 then stack.push(popType(SWInt, stack) & popType(SWInt, stack))
+      when 0x39 then stack.push(popType(SWInt, stack) | popType(SWInt, stack))
+      when 0x3a then stack.push(popType(SWInt, stack) ^ popType(SWInt, stack))
 
       # SECTION: IO Operations
-      when 0x30 then
+      when 0x40 then
         if (csi = @@stdin).is_a?(IO::FileDescriptor) && csi.tty?
           stack.push(csi.raw &.read_char.try(&.ord))
         else
           stack.push(csi.read_char.try(&.ord))
         end
-      when 0x31 then stack.push(@@stdin.gets)
-      when 0x32 then @@stdout.print popType(SWInt, stack).chr
-      when 0x33 then @@stdout.print popType(String, stack)
-        
-      # SECTION: Type Queries
-      when 0x40 then stack.push(stack.last.nil?)
-      when 0x41 then stack.push(stack.last.is_a?(Byte))
-      when 0x42 then stack.push(stack.last.is_a?(Bool))
-      when 0x43 then stack.push(stack.last.is_a?(Int32))
-      when 0x44 then stack.push(stack.last.is_a?(Int64))
-      when 0x45 then stack.push(stack.last.is_a?(UInt32))
-      when 0x46 then stack.push(stack.last.is_a?(UInt64))
-      when 0x47 then stack.push(stack.last.is_a?(Float32))
-      when 0x48 then stack.push(stack.last.is_a?(Float64))
-      when 0x49 then stack.push(stack.last.is_a?(String))
-      when 0x4a then stack.push(stack.last.is_a?(Array))
+      when 0x41 then stack.push(@@stdin.gets)
+      when 0x42 then @@stdout.print popType(SWInt, stack).chr
+      when 0x43 then @@stdout.print popType(String, stack)
 
       # TODO: Variable Operations
       # TODO: Control Flow
