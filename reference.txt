@@ -14,12 +14,7 @@ SECTION: Literals
   0x07 f32  4
   0x08 f64  8
   0x09 str  (len:u32)+len
-
-SECTION: Constructors
-  In contrast to literals, constructors pop their initialization data from the stack like normal opcodes.
-  When encountered, the resulting value will be pushed to the stack.
-= opcd name (params) ==============================================================================================================
-  0x10 list (len:int, members:any*len) -- Highest member on stack will be first in list. Errors if len < 0 or len > u32.
+  0x0a list (len:u32)     -- Pulls `len` items from the stack. Highest on stack = first in list.
 
 SECTION: Stack Operations
   Base operations on the data stack itself.
@@ -67,8 +62,7 @@ SECTION: Type Queries
   0x57 f32?
   0x58 f64?
   0x59 str?
-  -- Constructor types
-  0x60 list?
+  0x5a list?
 
 TODO: Variable Operations
 TODO: Control Flow

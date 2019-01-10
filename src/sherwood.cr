@@ -44,10 +44,8 @@ module Sherwood
       when 0x07 then stack.push(Float32.fromBytes(op.data))
       when 0x08 then stack.push(Float64.fromBytes(op.data))
       when 0x09 then stack.push(op.data.skip(4).map(&.chr).sum(""))
-
-      # SECTION: Constructors
-      when 0x10 then 
-        (size = popType(SWInt, stack)) > 0 &&
+      when 0x0a then 
+        (size = op.data.map(&.to_u32).bitwiseConcat) > 0 &&
           stack.push(Array(SWAny).new(size) { stack.pop }) ||
           stack.push([] of SWAny)
 
@@ -91,8 +89,7 @@ module Sherwood
       when 0x57 then stack.push(stack.last.is_a?(Float32))
       when 0x58 then stack.push(stack.last.is_a?(Float64))
       when 0x59 then stack.push(stack.last.is_a?(String))
-
-      when 0x60 then stack.push(stack.last.is_a?(Array))
+      when 0x5a then stack.push(stack.last.is_a?(Array))
 
       # TODO: Variable Operations
       # TODO: Control Flow

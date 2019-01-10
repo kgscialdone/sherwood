@@ -25,6 +25,7 @@ class Bytecode < Array(Opcode)
     when 0x03, 0x05, 0x07 then 4
     when 0x04, 0x06, 0x08 then 8
     when 0x09 then 4+prog[insp+1..insp+4].bitwiseConcat
+    when 0x0a then 4
     else 0
     end
   end
