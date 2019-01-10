@@ -19,32 +19,32 @@ SECTION: Literals
 SECTION: Stack Operations
   Base operations on the data stack itself.
 = opcd name (params) ==============================================================================================================
-  0x20 drop (v:any)        -- Removes the top of the stack.
-  0x21 dupe (v:any)        -- Duplicates the top of the stack.
-  0x22 swap (a:any, b:any) -- Swaps the top of the stack with the next value down.
+  0x10 drop (v:any)        -- Removes the top of the stack.
+  0x11 dupe (v:any)        -- Duplicates the top of the stack.
+  0x12 swap (a:any, b:any) -- Swaps the top of the stack with the next value down.
 
 SECTION: Arithmetic Operations
   Basic and bitwise arithmetic operations.
 = opcd name (params) ==============================================================================================================
-  0x30 add  (a:int, b:int) -- Adds the two numbers on the top of the stack.
-  0x31 sub  (a:int, b:int) -- Subtracts the number on the top of the stack from the number below it.
-  0x32 mul  (a:int, b:int) -- Multiplies the two numbers on the top of the stack.
-  0x33 div  (a:int, b:int) -- Divides the number on the top of the stack from the number below it.
-  0x34 mod  (a:int, b:int) -- Gets the remainder of dividing the two numbers on the top of the stack.
-  0x35 shl  (d:int, n:int) -- Shifts n left by d bits.
-  0x36 shr  (d:int, n:int) -- Shifts n right by d bits.
-  0x37 not  (a:int)        -- Bitwise NOT of a.
-  0x38 and  (a:int, b:int) -- Bitwise AND of a and b.
-  0x39 or   (a:int, b:int) -- Bitwise OR of a and b.
-  0x3a xor  (a:int, b:int) -- Bitwise XOR of a and b.
+  0x20 add  (a:int, b:int) -- Adds the two numbers on the top of the stack.
+  0x21 sub  (a:int, b:int) -- Subtracts the number on the top of the stack from the number below it.
+  0x22 mul  (a:int, b:int) -- Multiplies the two numbers on the top of the stack.
+  0x23 div  (a:int, b:int) -- Divides the number on the top of the stack from the number below it.
+  0x24 mod  (a:int, b:int) -- Gets the remainder of dividing the two numbers on the top of the stack.
+  0x25 shl  (d:int, n:int) -- Shifts n left by d bits.
+  0x26 shr  (d:int, n:int) -- Shifts n right by d bits.
+  0x27 not  (a:int)        -- Bitwise NOT of a.
+  0x28 and  (a:int, b:int) -- Bitwise AND of a and b.
+  0x29 or   (a:int, b:int) -- Bitwise OR of a and b.
+  0x2a xor  (a:int, b:int) -- Bitwise XOR of a and b.
 
 SECTION: IO Operations
   Basic IO interactions.
 = opcd name (params) ==============================================================================================================
-  0x40 getc ()      -- Gets a char from stdin and pushes it as a u32.
-  0x41 getl ()      -- Gets a line from stdin and pushes it as a str (excluding trailing \r?\n).
-  0x42 putc (c:int) -- Prints a number from the stack as a character. Errors if c < 0 or c > u32.
-  0x43 puts (s:str) -- Prints a string from the stack.
+  0x30 getc ()      -- Gets a char from stdin and pushes it as a u32.
+  0x31 getl ()      -- Gets a line from stdin and pushes it as a str (excluding trailing \r?\n).
+  0x32 putc (c:int) -- Prints a number from the stack as a character. Errors if c < 0 or c > u32.
+  0x33 puts (s:str) -- Prints a string from the stack.
 
 SECTION: Type Queries
   Opcodes to query the types of variables from the stack.
@@ -52,17 +52,17 @@ SECTION: Type Queries
   Each opcode returns a bool; true if the type matches, false if it does not.
 = opcd name ======================================================================================================================
   -- Literal types
-  0x50 null?
-  0x51 byte?
-  0x52 bool?
-  0x53 i32?
-  0x54 i64?
-  0x55 u32?
-  0x56 u64?
-  0x57 f32?
-  0x58 f64?
-  0x59 str?
-  0x5a list?
+  0x40 null?
+  0x41 byte?
+  0x42 bool?
+  0x43 i32?
+  0x44 i64?
+  0x45 u32?
+  0x46 u64?
+  0x47 f32?
+  0x48 f64?
+  0x49 str?
+  0x4a list?
 
 TODO: Variable Operations
 TODO: Control Flow
