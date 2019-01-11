@@ -59,10 +59,10 @@ SECTION: Arithmetic Operations
 SECTION: IO Operations
   Basic IO interactions.
 = opcd name (params) ==============================================================================================================
-  0x40 getc ()      -- Gets a char from stdin and pushes it as a u32.
-  0x41 getl ()      -- Gets a line from stdin and pushes it as a str (excluding trailing \r?\n).
-  0x42 putc (c:int) -- Prints a number from the stack as a character. Errors if c < 0 or c > u32.
-  0x43 puts (s:str) -- Prints a string from the stack.
+  0x50 getc ()      -- Gets a char from stdin and pushes it as a u32.
+  0x51 getl ()      -- Gets a line from stdin and pushes it as a str (excluding trailing \r?\n).
+  0x52 putc (c:int) -- Prints a number from the stack as a character. Errors if c < 0 or c > u32.
+  0x53 puts (s:str) -- Prints a string from the stack.
 
 TODO: Variable Operations
 TODO: Control Flow

@@ -81,10 +81,10 @@ module Sherwood
       when 0x3a then stack.push(popType(SWInt, stack) ^ popType(SWInt, stack))
 
       # SECTION: IO Operations
-      when 0x40 then stack.push((@@stdin.as(IO::FileDescriptor).raw &.read_char rescue @@stdin.read_char).try(&.ord))
-      when 0x41 then stack.push(@@stdin.gets)
-      when 0x42 then @@stdout.print popType(SWInt, stack).chr
-      when 0x43 then @@stdout.print popType(String, stack)
+      when 0x50 then stack.push((@@stdin.as(IO::FileDescriptor).raw &.read_char rescue @@stdin.read_char).try(&.ord))
+      when 0x51 then stack.push(@@stdin.gets)
+      when 0x52 then @@stdout.print popType(SWInt, stack).chr
+      when 0x53 then @@stdout.print popType(String, stack)
 
       # TODO: Variable Operations
       # TODO: Control Flow

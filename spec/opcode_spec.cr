@@ -48,20 +48,20 @@ describe "SECTION: Arithmetic Operations (0x3_)" do
   opcode "0x3a xor ", [0b10110000], 0x01, 0b00100100, 0x01, 0b10010100, 0x3a
 end
 
-describe "SECTION: IO Operations (0x4_)" do
+describe "SECTION: IO Operations (0x5_)" do
   withStdin("aabc\ntest") {
-    opcode "0x40 getc", ['a'.ord], 0x40
-    opcode "0x41 getl", ["abc"],   0x41
+    opcode "0x50 getc", ['a'.ord], 0x50
+    opcode "0x51 getl", ["abc"],   0x51
   }
 
   withStdout {
-    opcode "0x42 putc", [] of SWAny, 0x01, 97, 0x42 {
+    opcode "0x52 putc", [] of SWAny, 0x01, 97, 0x52 {
       Sherwood.stdout.rewind.to_s.should eq("a")
     }
   }
   
   withStdout {
-    opcode "0x43 putl", [] of SWAny, [0x09, 0x00, 0x00, 0x00, 14].map(&.to_u8) + "Hello, world!\n".bytes + [0x43_u8] {
+    opcode "0x53 putl", [] of SWAny, [0x09, 0x00, 0x00, 0x00, 14].map(&.to_u8) + "Hello, world!\n".bytes + [0x53_u8] {
       Sherwood.stdout.rewind.to_s.should eq("Hello, world!\n")
     }
   }
