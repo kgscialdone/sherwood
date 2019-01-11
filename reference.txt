@@ -21,7 +21,6 @@ SECTION: Type Queries
   These opcodes operate on the top of the stack, but do not pop from it.
   Each opcode returns a bool; true if the type matches, false if it does not.
 = opcd name ======================================================================================================================
-  -- Literal types
   0x10 null?
   0x11 byte?
   0x12 bool?
@@ -55,6 +54,17 @@ SECTION: Arithmetic Operations
   0x38 and  (a:int, b:int) -- Bitwise AND of a and b.
   0x39 or   (a:int, b:int) -- Bitwise OR of a and b.
   0x3a xor  (a:int, b:int) -- Bitwise XOR of a and b.
+
+SECTION: Comparison Operations
+  Opcodes for comparing values.
+  These opcodes operate on the top of the stack, but do not pop from it.
+= opcd name (params) ==============================================================================================================
+  0x40 eql? (a:any, b:any) -- Returns true if a == b.
+  0x41 neq? (a:any, b:any) -- Returns true if a != b.
+  0x42 grt? (a:num, b:num) -- Returns true if b >  a.
+  0x43 gte? (a:num, b:num) -- Returns true if b >= a.
+  0x44 lst? (a:num, b:num) -- Returns true if b <  a.
+  0x45 lse? (a:num, b:num) -- Returns true if b <= a.
 
 SECTION: IO Operations
   Basic IO interactions.

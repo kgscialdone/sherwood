@@ -80,6 +80,14 @@ module Sherwood
       when 0x39 then stack.push(popType(SWInt, stack) | popType(SWInt, stack))
       when 0x3a then stack.push(popType(SWInt, stack) ^ popType(SWInt, stack))
 
+      # SECTION: Comparison Operations
+      when 0x40 then stack.push(stack[-1] == stack[-2])
+      when 0x41 then stack.push(stack[-1] != stack[-2])
+      when 0x42 then stack.push(peekType(SWNum, stack, -2) >  peekType(SWNum, stack))
+      when 0x43 then stack.push(peekType(SWNum, stack, -2) >= peekType(SWNum, stack))
+      when 0x44 then stack.push(peekType(SWNum, stack, -2) <  peekType(SWNum, stack))
+      when 0x45 then stack.push(peekType(SWNum, stack, -2) <= peekType(SWNum, stack))
+
       # SECTION: IO Operations
       when 0x50 then stack.push((@@stdin.as(IO::FileDescriptor).raw &.read_char rescue @@stdin.read_char).try(&.ord))
       when 0x51 then stack.push(@@stdin.gets)
@@ -102,6 +110,12 @@ module Sherwood
   # Pops a value of the given type from the stack or throws a type error on failure.
   private macro popType(typ, stack)
     (v = {{stack}}.pop).as?({{typ}}) || 
+      raise "Type error: Expected #{{{typ}}}, got #{v.class}"
+  end
+
+  # Peeks a value of the given type from the stack or throws a type error on failure.
+  private macro peekType(typ, stack, pos = -1)
+    (v = {{stack}}[{{pos}}]).as?({{typ}}) ||
       raise "Type error: Expected #{{{typ}}}, got #{v.class}"
   end
 end
