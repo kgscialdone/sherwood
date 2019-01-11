@@ -81,12 +81,7 @@ module Sherwood
       when 0x3a then stack.push(popType(SWInt, stack) ^ popType(SWInt, stack))
 
       # SECTION: IO Operations
-      when 0x40 then
-        if (csi = @@stdin).is_a?(IO::FileDescriptor) && csi.tty?
-          stack.push(csi.raw &.read_char.try(&.ord))
-        else
-          stack.push(csi.read_char.try(&.ord))
-        end
+      when 0x40 then stack.push((@@stdin.as(IO::FileDescriptor).raw &.read_char rescue @@stdin.read_char).try(&.ord))
       when 0x41 then stack.push(@@stdin.gets)
       when 0x42 then @@stdout.print popType(SWInt, stack).chr
       when 0x43 then @@stdout.print popType(String, stack)
