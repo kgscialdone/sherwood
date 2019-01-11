@@ -88,6 +88,8 @@ module Sherwood
 
       # TODO: Variable Operations
       # TODO: Control Flow
+
+      else raise "Encountered undefined opcode 0x#{op.opcd.to_s(16).rjust(2,'0')}"
       end
 
       {% if flag?(:stack) %} puts "    0x#{op.opcd.to_s(16).rjust(2,'0')} #{stack}" {% end %}
