@@ -1,31 +1,18 @@
 require "spec"
 require "../src/sherwood.cr"
-include Sherwood
+include Sherwood::Types
 
-macro opcode(name, expected, *bytes, &block)
+macro opcode(name, expected, *bytes, stdin = "", stdout = "", &block)
   describe {{name}} do
     it "" do
-      bytes = {{bytes}}
-      bytes = if bytes.is_a?(Tuple(Array(Byte))); bytes.first.map(&.to_u8) else bytes.to_a.map(&.to_u8) end
-      result = Sherwood.runBytecode(bytes.to_a.map(&.to_u8))
-      result.should eq({{expected}})
-      {{block && block.body}}
+      withIO(IO::Memory.new(), IO::Memory.new({{stdin}})) {|stdout, stdin|
+        result = Sherwood.new(stdin, stdout).runBytecode({{bytes}}.to_a.flatten.map(&.to_u8))
+        result.should eq({{expected}})
+        stdout.rewind.to_s.should eq({{stdout}})
+        {{block && block.body}}
+      }
     end
   end
-end
-
-macro withStdin(str, &block)
-  Sherwood.stdin = IO::Memory.new({{str}})
-  {{block.body}}
-  Sherwood.stdin.close
-  Sherwood.stdin = STDIN
-end
-
-macro withStdout(&block)
-  Sherwood.stdout = IO::Memory.new()
-  {{block.body}}
-  Sherwood.stdout.close
-  Sherwood.stdout = STDOUT
 end
 
 Spec.override_default_formatter(SherwoodFormatter.new)

@@ -1,34 +1,23 @@
 require "./bytecode"
 require "./util"
 
-module Sherwood
+class Sherwood
   VERSION = "0.1.0"
+  module Types
+    alias SWAny = Nil | SWNum | Bool | String | Array(SWAny)
+    alias SWNum = SWInt | SWFlt
+    alias SWInt = Byte | Int32 | Int64 | UInt32 | UInt64
+    alias SWFlt = Float32 | Float64
+  end
 
-  # Standard IO ports, abstracted out for ease of testing
-  @@stdin  : IO = STDIN
-  @@stdout : IO = STDOUT
-  @@stderr : IO = STDERR
-  def self.stdin= (@@stdin  : IO); end
-  def self.stdout=(@@stdout : IO); end
-  def self.stderr=(@@stderr : IO); end
-  def self.stdin ; @@stdin  end
-  def self.stdout; @@stdout end
-  def self.stderr; @@stderr end
-
-  # Type aliases for convenience
-  alias SWAny = Nil | SWNum | Bool | String | Array(SWAny)
-  alias SWNum = SWInt | SWFlt
-  alias SWInt = Byte | Int32 | Int64 | UInt32 | UInt64
-  alias SWFlt = Float32 | Float64
+  def initialize(@stdin : IO = STDIN, @stdout : IO = STDOUT)
+  end
 
   # Runs a set of bytecode.
-  def self.runBytecode(prog : IO)
-    return self.runBytecode(prog.each_byte.to_a) end
-  def self.runBytecode(*prog : Byte)
-    return self.runBytecode(prog) end
-  def self.runBytecode(prog : Array(Byte))
-    return self.runBytecode(Bytecode.new(prog)) end
-  def self.runBytecode(prog : Bytecode)
+  def runBytecode(prog : IO); return runBytecode(prog.each_byte.to_a) end
+  def runBytecode(*prog : Byte); return runBytecode(prog) end
+  def runBytecode(prog : Array(Byte)); return runBytecode(Bytecode.new(prog)) end
+  def runBytecode(prog : Bytecode)
     insp  = 0
     stack = [] of SWAny
 
@@ -89,10 +78,10 @@ module Sherwood
       when 0x45 then stack.push(peekType(SWNum, stack, -2) <= peekType(SWNum, stack))
 
       # SECTION: IO Operations
-      when 0x50 then stack.push((@@stdin.as(IO::FileDescriptor).raw &.read_char rescue @@stdin.read_char).try(&.ord))
-      when 0x51 then stack.push(@@stdin.gets)
-      when 0x52 then @@stdout.print popType(SWInt, stack).chr
-      when 0x53 then @@stdout.print popType(String, stack)
+      when 0x50 then stack.push((@stdin.as(IO::FileDescriptor).raw &.read_char rescue @stdin.read_char).try(&.ord))
+      when 0x51 then stack.push(@stdin.gets)
+      when 0x52 then @stdout.print popType(SWInt, stack).chr
+      when 0x53 then @stdout.print popType(String, stack)
 
       # TODO: Variable Operations
       # TODO: Control Flow
@@ -120,4 +109,4 @@ module Sherwood
   end
 end
 
-# Sherwood.runBytecode File.open(ARGV[0])
+# Sherwood.new.runBytecode File.open(ARGV[0])

@@ -10,7 +10,7 @@ describe "SECTION: Literals (0x0_)" do
   opcode "0x06 u64 ", [1085102592571150095_u64], 0x06, 0x0f, 0x0f, 0x0f, 0x0f, 0x0f, 0x0f, 0x0f, 0x0f
   opcode "0x07 f32 ", [9000.1_f32],              0x07, 0x46, 0x0c, 0xa0, 0x66
   opcode "0x08 f64 ", [9000.1_f64],              0x08, 0x40, 0xc1, 0x94, 0x0c, 0xcc, 0xcc, 0xcc, 0xcd
-  opcode "0x09 str ", ["Hello, world!"],         [0x09, 0x00, 0x00, 0x00, 13].map(&.to_u8) + "Hello, world!".bytes
+  opcode "0x09 str ", ["Hello, world!"],         0x09, 13.bytes, "Hello, world!".bytes
   opcode "0x0a list", [[true, false]],           0x02, 0, 0x02, 1, 0x0a, 0x00, 0x00, 0x00, 0x02
 end
 
@@ -58,22 +58,10 @@ describe "SECTION: Comparison Operations" do
 end
 
 describe "SECTION: IO Operations (0x5_)" do
-  withStdin("aabc\ntest") {
-    opcode "0x50 getc", ['a'.ord], 0x50
-    opcode "0x51 getl", ["abc"],   0x51
-  }
-
-  withStdout {
-    opcode "0x52 putc", [] of SWAny, 0x01, 97, 0x52 {
-      Sherwood.stdout.rewind.to_s.should eq("a")
-    }
-  }
-  
-  withStdout {
-    opcode "0x53 putl", [] of SWAny, [0x09, 0x00, 0x00, 0x00, 14].map(&.to_u8) + "Hello, world!\n".bytes + [0x53_u8] {
-      Sherwood.stdout.rewind.to_s.should eq("Hello, world!\n")
-    }
-  }
+  opcode "0x50 getc", ['a'.ord],   0x50, stdin: "abc"
+  opcode "0x51 getl", ["abc"],     0x51, stdin: "abc\ntest"
+  opcode "0x52 putc", [] of SWAny, 0x01, 97, 0x52, stdout: "a"
+  opcode "0x53 putl", [] of SWAny, 0x09, 14.bytes, "Hello, world!\n".bytes, 0x53, stdout: "Hello, world!\n"
 end
 
 # TODO: Variable Operations
