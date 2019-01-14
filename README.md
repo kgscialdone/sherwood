@@ -1,5 +1,7 @@
 # sherwood
 
+![](logo.png?raw=true)
+
 A simple and sensible bytecode VM, because sometimes you can't see Sherwood Forest for the trees.
 
 ## Installation / Usage / Development
