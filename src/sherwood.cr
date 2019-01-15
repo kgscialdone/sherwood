@@ -98,14 +98,19 @@ class Sherwood
 
   # Pops a value of the given type from the stack or throws a type error on failure.
   private macro popType(typ, stack)
-    (v = {{stack}}.pop).as?({{typ}}) || 
-      raise "Type error: Expected #{{{typ}}}, got #{v.class}"
+    checkType({{typ}}, {{stack}}) ? stack.pop.as({{typ}})
+      : raise "Type error: Expected #{{{typ}}}, got #{stack.pop.class}"
   end
 
   # Peeks a value of the given type from the stack or throws a type error on failure.
   private macro peekType(typ, stack, pos = -1)
-    (v = {{stack}}[{{pos}}]).as?({{typ}}) ||
-      raise "Type error: Expected #{{{typ}}}, got #{v.class}"
+    checkType({{typ}}, {{stack}}, {{pos}}) ? stack[{{pos}}].as({{typ}}) 
+      : raise "Type error: Expected #{{{typ}}}, got #{stack.pop.class}"
+  end
+
+  # Checks the type of the top of the stack and returns true if it matches.
+  private macro checkType(typ, stack, pos = -1)
+    {{stack}}[{{pos}}].is_a?({{typ}})
   end
 end
 
