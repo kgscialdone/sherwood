@@ -40,20 +40,25 @@ SECTION: Stack Operations
   0x21 dupe (v:any)        -- Duplicates the top of the stack.
   0x22 swap (a:any, b:any) -- Swaps the top of the stack with the next value down.
 
-SECTION: Arithmetic Operations
-  Basic and bitwise arithmetic operations.
+SECTION: Primitive Operations
+  Basic and bitwise arithmetic operations, as well as bool/list/string operations.
+  Some opcodes are overloaded by parameter types. These will check the type of the top of the stack, 
+    and throw a type error if the second parameter does not match (if applicable).
 = opcd name (params) ==============================================================================================================
-  0x30 add  (a:int, b:int) -- Adds the two numbers on the top of the stack.
-  0x31 sub  (a:int, b:int) -- Subtracts the number on the top of the stack from the number below it.
-  0x32 mul  (a:int, b:int) -- Multiplies the two numbers on the top of the stack.
-  0x33 div  (a:int, b:int) -- Divides the number on the top of the stack from the number below it.
-  0x34 mod  (a:int, b:int) -- Gets the remainder of dividing the two numbers on the top of the stack.
-  0x35 shl  (d:int, n:int) -- Shifts n left by d bits.
-  0x36 shr  (d:int, n:int) -- Shifts n right by d bits.
-  0x37 not  (a:int)        -- Bitwise NOT of a.
-  0x38 and  (a:int, b:int) -- Bitwise AND of a and b.
-  0x39 or   (a:int, b:int) -- Bitwise OR of a and b.
-  0x3a xor  (a:int, b:int) -- Bitwise XOR of a and b.
+  0x30 add  (a:int, b:int)   -- Adds the two numbers on the top of the stack.
+  0x31 sub  (a:int, b:int)   -- Subtracts the number on the top of the stack from the number below it.
+  0x32 mul  (a:int, b:int)   -- Multiplies the two numbers on the top of the stack.
+  0x33 div  (a:int, b:int)   -- Divides the number on the top of the stack from the number below it.
+  0x34 mod  (a:int, b:int)   -- Gets the remainder of dividing the two numbers on the top of the stack.
+  0x35 shl  (d:int, n:int)   -- Shifts n left by d bits.
+  0x36 shr  (d:int, n:int)   -- Shifts n right by d bits.
+  0x37 not  (a:int)          -- Bitwise NOT of a.
+  0x37 not  (a:bool)         -- Logical NOT of a.
+  0x38 and  (a:int, b:int)   -- Bitwise AND of a and b.
+  0x38 and  (a:bool, b:bool) -- Logical AND of a and b.
+  0x39 or   (a:int, b:int)   -- Bitwise OR of a and b.
+  0x39 or   (a:bool, b:bool) -- Logical OR of a and b.
+  0x3a xor  (a:int, b:int)   -- Bitwise XOR of a and b.
 
 SECTION: Comparison Operations
   Opcodes for comparing values.

@@ -64,10 +64,20 @@ class Sherwood
       when 0x34 then stack.push((b = popType(SWInt, stack); popType(SWInt, stack)) % b)
       when 0x35 then stack.push((b = popType(SWInt, stack); popType(SWInt, stack)) << b)
       when 0x36 then stack.push((b = popType(SWInt, stack); popType(SWInt, stack)) >> b)
-      when 0x37 then stack.push(~popType(SWInt, stack))
-      when 0x38 then stack.push(popType(SWInt, stack) & popType(SWInt, stack))
-      when 0x39 then stack.push(popType(SWInt, stack) | popType(SWInt, stack))
-      when 0x3a then stack.push(popType(SWInt, stack) ^ popType(SWInt, stack))
+      when 0x37 then
+        checkType(SWInt, stack) &&
+          stack.push(~popType(SWInt, stack)) ||
+          stack.push(!popType(Bool, stack))
+      when 0x38 then
+        checkType(SWInt, stack) &&
+          stack.push(popType(SWInt, stack) & popType(SWInt, stack)) ||
+          stack.push(popType(Bool, stack) && popType(Bool, stack))
+      when 0x39 then
+        checkType(SWInt, stack) &&
+          stack.push(popType(SWInt, stack) | popType(SWInt, stack)) ||
+          stack.push(popType(Bool, stack) || popType(Bool, stack))
+      when 0x3a then 
+        stack.push(popType(SWInt, stack) ^ popType(SWInt, stack))
 
       # SECTION: Comparison Operations
       when 0x40 then stack.push(stack[-1] == stack[-2])
