@@ -86,3 +86,4 @@ SECTION: Control Flow
 ==============================================================================================================
   0x70 jump (o:int)         -- Changes the program counter by the given offset
   0x71 cjit (o:int, c:bool) -- Changes the program counter by the given offset if the condition is met
+  0x72 goto (c:int)         -- Chnages the program counter to the given counter value
