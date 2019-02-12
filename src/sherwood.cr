@@ -97,11 +97,10 @@ class Sherwood
       # TODO: Control Flow
       when 0x70 then insp -= popType(SWInt, stack)
       when 0x71 then
-        if popType(Bool, stack) then {
+        if popType(Bool, stack)
           popType(SWInt, stack)
-        } else {
-          # oops :)
-        }
+        end
+        
       when 0x72 then
         insp = popType(SWInt, stack)
 
