@@ -103,7 +103,13 @@ class Sherwood
       insp += 1
     end
 
-    return stack
+    return EvalResult.new(stack, prog)
+  end
+
+  struct EvalResult
+    getter stack : Array(Types::SWAny)
+    getter bytec : Bytecode
+    def initialize(@stack, @bytec) end
   end
 
   # Pops a value of the given type from the stack or throws a type error on failure.
