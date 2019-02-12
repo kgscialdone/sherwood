@@ -80,4 +80,9 @@ SECTION: IO Operations
   0x53 puts (s:str) -- Prints a string from the stack.
 
 TODO: Variable Operations
-TODO: Control Flow
+SECTION: Control Flow
+  Opcodes for controlling the program counter.
+= opcd name (params)
+==============================================================================================================
+  0x70 jump (o:int)         -- Changes the program counter by the given offset
+  0x71 cjit (o:int, c:bool) -- Changes the program counter by the given offset if the condition is met
