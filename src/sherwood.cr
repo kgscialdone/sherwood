@@ -96,6 +96,10 @@ class Sherwood
       # TODO: Variable Operations
       # TODO: Control Flow
       when 0x70 then insp -= popType(SWInt, stack)
+      when 0x71 then
+        if popType(Bool, stack) {
+          popType(SWInt, stack)
+        }
 
       else raise "Encountered undefined opcode 0x#{op.opcd.to_s(16).rjust(2,'0')}"
       end
