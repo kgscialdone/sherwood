@@ -21,3 +21,4 @@ Sherwood is nowhere near ready for use yet. I'd recommend not trying.
 ## Contributors
 
 - @swordglowsblue - creator, maintainer
+- @SafelySwift - contributor
