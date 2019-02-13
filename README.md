@@ -1,8 +1,7 @@
 # Sherwood
-
-<img text-align="center" src=""></img>
-
-![](logo.png?raw=true)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/swordglowsblue/sherwood/master/logo.png"></img>
+</p>
 
 A simple and sensible bytecode VM, because sometimes you can't see Sherwood Forest for the trees.
 
