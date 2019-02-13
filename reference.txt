@@ -1,4 +1,19 @@
--- Sherwood bytecode instruction layout --
+-- Sherwood Bytecode Instruction Reference
+  Opcodes in the Sherwood VM are single-byte identifiers. Each is split into two values; a group identifier
+    and an operation identifier. This maps nicely onto the first and second digits of the opcode's hexadecimal
+    representation, respectively (note that this is not used in the interpretation of the bytecode, and is
+    simply a design decision).
+  
+  Sherwood is a stack-based VM. Because of this, most opcodes require no accompanying data, and their byte width
+    is 1 - a single byte identifying the opcode. All other information is taken from the top of the stack. There
+    are exceptions to this, however, notably literals and control flow; these opcodes will require a set number 
+    of bytes following them to serve as their data.
+
+  Additionally, unlike many VMs, Sherwood does not support arbitrary instruction pointer manipulation. Instead,
+    it uses a labeled goto system. Labels are converted to a jump table and removed from the code before
+    execution, and can be jumped to by name with any of the jump operations. See the section on Control Flow
+    for more details.
+--
 
 SECTION: Literals
   Literals should be followed by n bytes of data to push as the given type.
