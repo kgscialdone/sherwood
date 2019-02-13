@@ -138,7 +138,7 @@ class Sherwood
   # Jumps to the location of the given label.
   private macro gotoLabel(insp, prog, name)
     {{insp}} = {{prog}}.labels[{{name}}]?.try(&.-(1)) ||
-      raise "Goto error: Attempted to jump to non-existent label #{{{name}}}"
+      raise "Jump error: Attempted to jump to non-existent label #{{{name}}}"
   end
 end
 
