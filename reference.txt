@@ -80,4 +80,20 @@ SECTION: IO Operations
   0x53 puts (s:str) -- Prints a string from the stack.
 
 TODO: Variable Operations
-TODO: Control Flow
+
+SECTION: Control Flow
+  Opcodes for dealing with control flow and instruction pointer manipulation.
+  All opcodes in this section use static label names structured like string literals (0x09) unless otherwise specified.
+  Example:
+    -- Correct
+    labl 4 test
+
+    -- Incorrect
+    str 4 test
+    labl
+= opcd name (params) ==============================================================================================================
+  0x70 labl ()              -- Creates a label which can be jumped to.
+  0x71 jump ()              -- Jumps to the label of the given name.
+  0x72 jmpc (b:bool)        -- Jumps to the label of the given name if b is true.
+  0x73 jmps (s:str)         -- Jumps to the label of the given name. Gets its label name from the stack.
+  0x74 jmsc (s:str, b:bool) -- Jumps to the label of the given name if b is true. Gets its label name from the stack.
