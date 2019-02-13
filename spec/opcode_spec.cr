@@ -68,4 +68,42 @@ describe "SECTION: IO Operations (0x5_)" do
 end
 
 # TODO: Variable Operations
-# TODO: Control Flow
+
+describe "SECTION: Control Flow (0x7_)" do
+  opcode "0x70 labl", [] of SWAny, 0x70, 4.bytes, "test".bytes do
+    result.bytec.labels.should eq({ "test" => 0 })
+  end
+
+  opcode "0x71 jump", ["shown!"],
+    0x71, 4.bytes, "test".bytes,
+    0x09, 7.bytes, "hidden!".bytes,
+    0x70, 4.bytes, "test".bytes,
+    0x09, 6.bytes, "shown!".bytes
+
+  opcode "0x72 jmpc", ["shown!"],
+    0x02, 0x00,
+    0x72, 4.bytes, "test".bytes,
+    0x09, 6.bytes, "shown!".bytes,
+    0x02, 0x01,
+    0x72, 4.bytes, "test".bytes,
+    0x09, 7.bytes, "hidden!".bytes,
+    0x70, 4.bytes, "test".bytes
+
+  opcode "0x73 jmps", ["shown!"],
+    0x09, 4.bytes, "test".bytes,
+    0x73,
+    0x09, 7.bytes, "hidden!".bytes,
+    0x70, 4.bytes, "test".bytes,
+    0x09, 6.bytes, "shown!".bytes
+
+  opcode "0x74 jmsc", ["shown!"],
+    0x02, 0x00,
+    0x09, 4.bytes, "test".bytes,
+    0x74,
+    0x09, 6.bytes, "shown!".bytes,
+    0x02, 0x01,
+    0x09, 4.bytes, "test".bytes,
+    0x74,
+    0x09, 7.bytes, "hidden!".bytes,
+    0x70, 4.bytes, "test".bytes
+end

@@ -32,7 +32,7 @@ class Sherwood
       when 0x06 then stack.push(op.data.map(&.to_u64).bitwiseConcat)
       when 0x07 then stack.push(Float32.fromBytes(op.data))
       when 0x08 then stack.push(Float64.fromBytes(op.data))
-      when 0x09 then stack.push(op.data.skip(4).map(&.chr).sum(""))
+      when 0x09 then stack.push(op.data.bitwiseString)
       when 0x0a then 
         (size = op.data.map(&.to_u32).bitwiseConcat) > 0 &&
           stack.push(Array(SWAny).new(size) { stack.pop }) ||
@@ -94,7 +94,13 @@ class Sherwood
       when 0x53 then @stdout.print popType(String, stack)
 
       # TODO: Variable Operations
-      # TODO: Control Flow
+
+      # SECTION: Control Flow
+      when 0x70 then # Label (handled at parsetime)
+      when 0x71 then gotoLabel(insp, prog, op.data.bitwiseString)
+      when 0x72 then gotoLabel(insp, prog, op.data.bitwiseString) if popType(Bool, stack)
+      when 0x73 then gotoLabel(insp, prog, popType(String, stack))
+      when 0x74 then s = popType(String, stack); gotoLabel(insp, prog, s) if popType(Bool, stack)
 
       else raise "Encountered undefined opcode 0x#{op.opcd.to_s(16).rjust(2,'0')}"
       end
@@ -103,7 +109,13 @@ class Sherwood
       insp += 1
     end
 
-    return stack
+    return EvalResult.new(stack, prog)
+  end
+
+  struct EvalResult
+    getter stack : Array(Types::SWAny)
+    getter bytec : Bytecode
+    def initialize(@stack, @bytec) end
   end
 
   # Pops a value of the given type from the stack or throws a type error on failure.
@@ -121,6 +133,12 @@ class Sherwood
   # Checks the type of the top of the stack and returns true if it matches.
   private macro checkType(typ, stack, pos = -1)
     {{stack}}[{{pos}}].is_a?({{typ}})
+  end
+
+  # Jumps to the location of the given label.
+  private macro gotoLabel(insp, prog, name)
+    {{insp}} = {{prog}}.labels[{{name}}]?.try(&.-(1)) ||
+      raise "Jump error: Attempted to jump to non-existent label #{{{name}}}"
   end
 end
 

@@ -7,7 +7,7 @@ macro opcode(name, expected, *bytes, stdin = "", stdout = "", &block)
     it "" do
       withIO(IO::Memory.new(), IO::Memory.new({{stdin}})) {|stdout, stdin|
         result = Sherwood.new(stdin, stdout).runBytecode({{bytes}}.to_a.flatten.map(&.to_u8))
-        result.should eq({{expected}})
+        result.stack.should eq({{expected}})
         stdout.rewind.to_s.should eq({{stdout}})
         {{block && block.body}}
       }
