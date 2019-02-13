@@ -2,6 +2,7 @@ alias Byte = UInt8
 
 class Array
   def bitwiseConcat(size = 8); self.reduce {|a,b| (a<<size)+b} end
+  def bitwiseString(lenSize = 4); self.skip(lenSize).map(&.chr).sum("") end
 end
 
 struct Float32
