@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-crystal run src/sherwood.cr -- "$@"
+crystal run src/cli.cr -- "$@"

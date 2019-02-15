@@ -6,7 +6,7 @@ authors:
 
 targets:
   sherwood:
-    main: src/sherwood.cr
+    main: src/cli.cr
 
 crystal: 0.26.1
 license: MIT

@@ -1,2 +1,2 @@
 @echo off
-crystal run src/sherwood.cr -- %*
+crystal run src/cli.cr -- %*

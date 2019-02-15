@@ -145,5 +145,3 @@ class Sherwood
       raise "Jump error: Attempted to jump to non-existent label #{{{name}}}"
   end
 end
-
-# Sherwood.new.runBytecode File.open(ARGV[0])
