@@ -9,7 +9,11 @@ class Sherwood
     alias SWInt = Byte | Int32 | Int64 | UInt32 | UInt64
     alias SWFlt = Float32 | Float64
   end
+end
 
+include Sherwood::Types
+
+class Sherwood
   def initialize(@stdin : IO = STDIN, @stdout : IO = STDOUT)
   end
 
